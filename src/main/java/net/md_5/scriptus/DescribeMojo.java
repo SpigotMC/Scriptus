@@ -42,10 +42,10 @@ public class DescribeMojo extends AbstractMojo
     @Parameter(property = "maven.changeSet.scmDirectory")
     private File scmDirectory;
     /**
-     * Format to use if we fail to get the Git info.
+     * Hash to use if we fail to get the Git info.
      */
     @Parameter(defaultValue = "unknown")
-    private String failFormat;
+    private String failHash;
     /**
      * Whether or not to fail the build when we cannot get info.
      */
@@ -55,6 +55,8 @@ public class DescribeMojo extends AbstractMojo
     @SuppressWarnings("UseSpecificCatch")
     public void execute() throws MojoExecutionException
     {
+        String gitHash = null;
+
         try
         {
             Git git = Git.open( scmDirectory );
@@ -65,11 +67,10 @@ public class DescribeMojo extends AbstractMojo
 
                 if ( log.hasNext() )
                 {
-                    String hash = git.getRepository().newObjectReader().abbreviate( log.next() ).name();
-                    String formatted = String.format( format, hash );
-
-                    project.getProperties().put( descriptionProperty, formatted );
-                    getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
+                    gitHash = git.getRepository().newObjectReader().abbreviate( log.next() ).name();
+                } else
+                {
+                    getLog().warn( "Warning: Repository has no commits!" );
                 }
             } finally
             {
@@ -82,8 +83,11 @@ public class DescribeMojo extends AbstractMojo
                 throw new MojoExecutionException( "Exception reading Git repo", ex );
             }
             getLog().warn( "Failed to get HEAD commit hash: " + ex.getClass().getName() + ":" + ex.getMessage() );
-
-            project.getProperties().put( descriptionProperty, failFormat );
         }
+
+        String formatted = String.format( format, ( gitHash == null ) ? failHash : gitHash );
+
+        project.getProperties().put( descriptionProperty, formatted );
+        getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
     }
 }
