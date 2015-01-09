@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
@@ -68,7 +69,14 @@ public class DescribeMojo extends AbstractMojo
 
                 if ( log.hasNext() )
                 {
-                    gitHash = git.getRepository().newObjectReader().abbreviate( log.next() ).name();
+                    ObjectReader reader = git.getRepository().newObjectReader();
+                    try
+                    {
+                        gitHash = reader.abbreviate( log.next() ).name();
+                    } finally
+                    {
+                        reader.release();
+                    }
                 } else
                 {
                     getLog().warn( "Warning: Repository has no commits!" );
