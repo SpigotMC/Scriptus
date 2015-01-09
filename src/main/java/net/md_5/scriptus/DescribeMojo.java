@@ -23,7 +23,7 @@ public class DescribeMojo extends AbstractMojo
     /**
      * Maven project we are invoking.
      */
-    @Parameter(property = "${project}", readonly = true)
+    @Parameter(property = "project", readonly = true)
     private MavenProject project;
     /**
      * Format used to set describe property. This first string argument will be
@@ -58,6 +58,7 @@ public class DescribeMojo extends AbstractMojo
     @Parameter(defaultValue = "7")
     private int hashLength;
 
+    @Override
     @SuppressWarnings("UseSpecificCatch")
     public void execute() throws MojoExecutionException
     {
