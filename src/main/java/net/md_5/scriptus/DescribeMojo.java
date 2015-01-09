@@ -23,7 +23,7 @@ public class DescribeMojo extends AbstractMojo
     /**
      * Maven project we are invoking.
      */
-    @Parameter(name = "${project}", readonly = true)
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
     /**
      * Format used to set describe property. This first string argument will be
@@ -52,6 +52,11 @@ public class DescribeMojo extends AbstractMojo
      */
     @Parameter(defaultValue = "false")
     private boolean fail;
+    /**
+     * Length of the abbreviated hash.
+     */
+    @Parameter(defaultValue = "7")
+    private int hashLength;
 
     @SuppressWarnings("UseSpecificCatch")
     public void execute() throws MojoExecutionException
@@ -72,7 +77,7 @@ public class DescribeMojo extends AbstractMojo
 
                     try
                     {
-                        gitHash = reader.abbreviate( head ).name();
+                        gitHash = reader.abbreviate( head, hashLength ).name();
                     } finally
                     {
                         reader.release();
