@@ -6,12 +6,12 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
-import java.util.Iterator;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
  * Mojo to set a user defined property to the current commit hash, in a user
@@ -65,14 +65,15 @@ public class DescribeMojo extends AbstractMojo
 
             try
             {
-                Iterator<RevCommit> log = git.log().setMaxCount( 1 ).call().iterator();
+                ObjectId head = git.getRepository().resolve( Constants.HEAD );
 
-                if ( log.hasNext() )
+                if ( head != null )
                 {
                     ObjectReader reader = git.getRepository().newObjectReader();
+
                     try
                     {
-                        gitHash = reader.abbreviate( log.next() ).name();
+                        gitHash = reader.abbreviate( head ).name();
                     } finally
                     {
                         reader.release();
