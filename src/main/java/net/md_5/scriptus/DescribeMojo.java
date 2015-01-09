@@ -23,7 +23,7 @@ public class DescribeMojo extends AbstractMojo
     /**
      * Maven project we are invoking.
      */
-    @Parameter(name = "${project}", readonly = true)
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
     /**
      * Format used to set describe property. This first string argument will be
