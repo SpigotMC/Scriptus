@@ -6,7 +6,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
@@ -24,7 +23,7 @@ public class DescribeMojo extends AbstractMojo
     /**
      * Maven project we are invoking.
      */
-    @Component
+    @Parameter(name = "${project}", readonly = true)
     private MavenProject project;
     /**
      * Format used to set describe property. This first string argument will be
