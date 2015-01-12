@@ -8,6 +8,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
@@ -40,7 +41,7 @@ public class DescribeMojo extends AbstractMojo
      * Directory of the .git folder. Normally the current directory will be
      * sufficient.
      */
-    @Parameter(property = "maven.changeSet.scmDirectory")
+    @Parameter(property = "maven.changeSet.scmDirectory", defaultValue = "${project.basedir}")
     private File scmDirectory;
     /**
      * Hash to use if we fail to get the Git info.
@@ -91,11 +92,18 @@ public class DescribeMojo extends AbstractMojo
             {
                 git.close();
             }
+        } catch ( RepositoryNotFoundException ex )
+        {
+            if ( fail )
+            {
+                throw new MojoExecutionException( "Could not find Git repository", ex );
+            }
+            getLog().warn( "Could not find Git repository in " + scmDirectory );
         } catch ( Exception ex )
         {
             if ( fail )
             {
-                throw new MojoExecutionException( "Exception reading Git repo", ex );
+                throw new MojoExecutionException( "Exception reading Git repository", ex );
             }
             getLog().warn( "Failed to get HEAD commit hash: " + ex.getClass().getName() + ":" + ex.getMessage() );
         }
