@@ -11,7 +11,7 @@
 
     <groupId>net.md-5</groupId>
     <artifactId>scriptus</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <packaging>maven-plugin</packaging>
 
     <name>Scriptus</name>

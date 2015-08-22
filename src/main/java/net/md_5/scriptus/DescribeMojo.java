@@ -38,6 +38,11 @@ public class DescribeMojo extends AbstractMojo
     @Parameter(defaultValue = "describe")
     private String descriptionProperty;
     /**
+     * Whether or not to override the existing description property.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean overrideDescriptionProperty;
+    /**
      * Directory of the .git folder. Normally the current directory will be
      * sufficient.
      */
@@ -110,7 +115,9 @@ public class DescribeMojo extends AbstractMojo
 
         String formatted = String.format( format, ( gitHash == null ) ? failHash : gitHash );
 
-        project.getProperties().put( descriptionProperty, formatted );
-        getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
+        if (overrideDescriptionProperty || !project.getProperties().containsKey(descriptionProperty)) {
+            project.getProperties().put(descriptionProperty, formatted);
+            getLog().info(String.format("Set property \"%s\" to \"%s\"", descriptionProperty, formatted));
+        }
     }
 }
