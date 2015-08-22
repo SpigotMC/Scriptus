@@ -115,9 +115,9 @@ public class DescribeMojo extends AbstractMojo
 
         String formatted = String.format( format, ( gitHash == null ) ? failHash : gitHash );
 
-        if (overrideDescriptionProperty || !project.getProperties().containsKey(descriptionProperty)) {
-            project.getProperties().put(descriptionProperty, formatted);
-            getLog().info(String.format("Set property \"%s\" to \"%s\"", descriptionProperty, formatted));
+        if ( overrideDescriptionProperty || !project.getProperties().containsKey( descriptionProperty ) ) {
+            project.getProperties().put( descriptionProperty, formatted );
+            getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
         }
     }
 }
