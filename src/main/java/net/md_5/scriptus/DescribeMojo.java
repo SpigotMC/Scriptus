@@ -5,7 +5,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.File;
+
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
@@ -20,7 +22,6 @@ import org.eclipse.jgit.lib.ObjectReader;
 @Mojo(name = "describe", defaultPhase = LifecyclePhase.INITIALIZE)
 public class DescribeMojo extends AbstractMojo
 {
-
     /**
      * Maven project we are invoking.
      */
@@ -41,7 +42,7 @@ public class DescribeMojo extends AbstractMojo
      * Whether or not to override the existing description property.
      */
     @Parameter(defaultValue = "false")
-    private boolean overrideDescriptionProperty;
+    private boolean override;
     /**
      * Directory of the .git folder. Normally the current directory will be
      * sufficient.
@@ -68,6 +69,12 @@ public class DescribeMojo extends AbstractMojo
     @SuppressWarnings("UseSpecificCatch")
     public void execute() throws MojoExecutionException
     {
+        if ( !override && project.getProperties().containsKey( descriptionProperty ) )
+        {
+            getLog().info( String.format( "Property \"%s\" already set to \"%s\"", descriptionProperty, project.getProperties().getProperty( descriptionProperty ) ) );
+            return;
+        }
+
         String gitHash = null;
 
         try
@@ -115,9 +122,7 @@ public class DescribeMojo extends AbstractMojo
 
         String formatted = String.format( format, ( gitHash == null ) ? failHash : gitHash );
 
-        if ( overrideDescriptionProperty || !project.getProperties().containsKey( descriptionProperty ) ) {
-            project.getProperties().put( descriptionProperty, formatted );
-            getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
-        }
+        project.getProperties().put( descriptionProperty, formatted );
+        getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
     }
 }
