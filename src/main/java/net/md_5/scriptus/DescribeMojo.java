@@ -20,6 +20,7 @@ import org.eclipse.jgit.lib.ObjectReader;
 @Mojo(name = "describe", defaultPhase = LifecyclePhase.INITIALIZE)
 public class DescribeMojo extends AbstractMojo
 {
+
     /**
      * Maven project we are invoking.
      */
