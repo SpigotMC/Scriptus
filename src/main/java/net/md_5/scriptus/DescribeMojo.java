@@ -38,6 +38,11 @@ public class DescribeMojo extends AbstractMojo
     @Parameter(defaultValue = "describe")
     private String descriptionProperty;
     /**
+     * Whether or not to override the existing description property.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean override;
+    /**
      * Directory of the .git folder. Normally the current directory will be
      * sufficient.
      */
@@ -63,6 +68,12 @@ public class DescribeMojo extends AbstractMojo
     @SuppressWarnings("UseSpecificCatch")
     public void execute() throws MojoExecutionException
     {
+        if ( !override && project.getProperties().containsKey( descriptionProperty ) )
+        {
+            getLog().info( String.format( "Property \"%s\" already set to \"%s\"", descriptionProperty, project.getProperties().getProperty( descriptionProperty ) ) );
+            return;
+        }
+
         String gitHash = null;
 
         try
