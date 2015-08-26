@@ -93,7 +93,7 @@ public class DescribeMojo extends AbstractMojo
                         gitHash = reader.abbreviate( head, hashLength ).name();
                     } finally
                     {
-                        reader.release();
+                        reader.close();
                     }
                 } else
                 {
