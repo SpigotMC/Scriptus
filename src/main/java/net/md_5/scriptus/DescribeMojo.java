@@ -7,11 +7,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 import org.apache.maven.project.MavenProject;
-import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
  * Mojo to set a user defined property to the current commit hash, in a user
@@ -78,15 +79,15 @@ public class DescribeMojo extends AbstractMojo
 
         try
         {
-            Git git = Git.open( scmDirectory );
+            Repository repository = new FileRepositoryBuilder().findGitDir( scmDirectory ).build();
 
             try
             {
-                ObjectId head = git.getRepository().resolve( Constants.HEAD );
+                ObjectId head = repository.resolve( Constants.HEAD );
 
                 if ( head != null )
                 {
-                    ObjectReader reader = git.getRepository().newObjectReader();
+                    ObjectReader reader = repository.newObjectReader();
 
                     try
                     {
@@ -101,7 +102,7 @@ public class DescribeMojo extends AbstractMojo
                 }
             } finally
             {
-                git.close();
+                repository.close();
             }
         } catch ( RepositoryNotFoundException ex )
         {
