@@ -18,7 +18,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
  * Mojo to set a user defined property to the current commit hash, in a user
  * defined format.
  */
-@Mojo(name = "describe", defaultPhase = LifecyclePhase.INITIALIZE)
+@Mojo(name = "describe", defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true)
 public class DescribeMojo extends AbstractMojo
 {
 
