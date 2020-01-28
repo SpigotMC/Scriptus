@@ -71,7 +71,7 @@ public class DescribeMojo extends AbstractMojo
     {
         if ( !override && project.getProperties().containsKey( descriptionProperty ) )
         {
-            getLog().info( String.format( "Property \"%s\" already set to \"%s\"", descriptionProperty, project.getProperties().getProperty( descriptionProperty ) ) );
+            getLog().warn( String.format( "Property \"%s\" already set to \"%s\"", descriptionProperty, project.getProperties().getProperty( descriptionProperty ) ) );
             return;
         }
 
