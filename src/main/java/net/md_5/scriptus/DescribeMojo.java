@@ -12,6 +12,7 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
@@ -39,7 +40,7 @@ public class DescribeMojo extends AbstractMojo
     @Parameter(defaultValue = "describe")
     private String descriptionProperty;
     /**
-     * Whether or not to override the existing description property.
+     * Whether or not to override the existing description / time property.
      */
     @Parameter(defaultValue = "false")
     private boolean override;
@@ -64,18 +65,18 @@ public class DescribeMojo extends AbstractMojo
      */
     @Parameter(defaultValue = "7")
     private int hashLength;
+    /**
+     * Time property to set with the commit time.
+     */
+    @Parameter(defaultValue = "project.build.outputTimestamp")
+    private String timeProperty;
 
     @Override
     @SuppressWarnings("UseSpecificCatch")
     public void execute() throws MojoExecutionException
     {
-        if ( !override && project.getProperties().containsKey( descriptionProperty ) )
-        {
-            getLog().warn( String.format( "Property \"%s\" already set to \"%s\"", descriptionProperty, project.getProperties().getProperty( descriptionProperty ) ) );
-            return;
-        }
-
         String gitHash = null;
+        int commitTime = -1;
 
         try
         {
@@ -92,6 +93,15 @@ public class DescribeMojo extends AbstractMojo
                     try
                     {
                         gitHash = reader.abbreviate( head, hashLength ).name();
+
+                        RevWalk walk = new RevWalk( reader );
+                        try
+                        {
+                            commitTime = walk.parseCommit( head ).getCommitTime();
+                        } finally
+                        {
+                            walk.close();
+                        }
                     } finally
                     {
                         reader.close();
@@ -120,9 +130,24 @@ public class DescribeMojo extends AbstractMojo
             getLog().warn( "Failed to get HEAD commit hash: " + ex.getClass().getName() + ":" + ex.getMessage() );
         }
 
-        String formatted = String.format( format, ( gitHash == null ) ? failHash : gitHash );
+        setProperty( descriptionProperty, String.format( format, ( gitHash == null ) ? failHash : gitHash ) );
+        setProperty( timeProperty, Integer.toString( ( commitTime == -1 ) ? (int) ( System.currentTimeMillis() / 1000L ) : commitTime ) );
+    }
 
-        project.getProperties().put( descriptionProperty, formatted );
-        getLog().info( String.format( "Set property \"%s\" to \"%s\"", descriptionProperty, formatted ) );
+    private void setProperty(String property, String value)
+    {
+        if ( property == null || property.isEmpty() )
+        {
+            return;
+        }
+
+        if ( !override && project.getProperties().containsKey( property ) )
+        {
+            getLog().warn( String.format( "Property \"%s\" already set to \"%s\"", property, project.getProperties().getProperty( property ) ) );
+            return;
+        }
+
+        project.getProperties().put( property, value );
+        getLog().info( String.format( "Set property \"%s\" to \"%s\"", property, value ) );
     }
 }
