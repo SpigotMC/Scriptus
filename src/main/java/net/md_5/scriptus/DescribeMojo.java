@@ -130,11 +130,23 @@ public class DescribeMojo extends AbstractMojo
             getLog().warn( "Failed to get HEAD commit hash: " + ex.getClass().getName() + ":" + ex.getMessage() );
         }
 
-        setProperty( descriptionProperty, String.format( format, ( gitHash == null ) ? failHash : gitHash ) );
-        setProperty( timeProperty, Integer.toString( ( commitTime == -1 ) ? (int) ( System.currentTimeMillis() / 1000L ) : commitTime ) );
+        setProperty( descriptionProperty, String.format( format, ( gitHash == null ) ? failHash : gitHash ), override );
+
+        boolean overrideTime = true;
+        if ( project.getProperties().containsKey( timeProperty ) )
+        {
+            try
+            {
+                commitTime = Math.max( commitTime, Integer.parseInt( project.getProperties().getProperty( timeProperty ) ) );
+            } catch ( NumberFormatException ex )
+            {
+                overrideTime = override;
+            }
+        }
+        setProperty( timeProperty, Integer.toString( ( commitTime == -1 ) ? (int) ( System.currentTimeMillis() / 1000L ) : commitTime ), overrideTime );
     }
 
-    private void setProperty(String property, String value)
+    private void setProperty(String property, String value, boolean override)
     {
         if ( property == null || property.isEmpty() )
         {
