@@ -11,7 +11,7 @@
 
     <groupId>net.md-5</groupId>
     <artifactId>scriptus</artifactId>
-    <version>0.4.1</version>
+    <version>0.5.0</version>
     <packaging>maven-plugin</packaging>
 
     <name>Scriptus</name>
@@ -19,10 +19,10 @@
     <description>Maven plugin which writes Git version into build properties.</description>
 
     <properties>
-        <maven.api.version>2.0</maven.api.version>
-        <maven.tools.version>3.3</maven.tools.version>
-        <maven.compiler.source>1.5</maven.compiler.source>
-        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.api.version>3.2.5</maven.api.version>
+        <maven.tools.version>3.9.0</maven.tools.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
+            <artifactId>maven-core</artifactId>
             <version>${maven.api.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>4.1.0.201509280440-r</version>
+            <version>5.13.2.202306221912-r</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
