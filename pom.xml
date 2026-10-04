@@ -32,7 +32,7 @@
     </scm>
 
     <properties>
-        <maven.api.version>3.2.5</maven.api.version>
+        <maven.api.version>3.8.1</maven.api.version>
         <maven.tools.version>3.9.0</maven.tools.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
