@@ -153,9 +153,10 @@ public class DescribeMojo extends AbstractMojo
             return;
         }
 
-        if ( !override && project.getProperties().containsKey( property ) )
+        String existingProperty = project.getProperties().getProperty( property );
+        if ( !override && existingProperty != null && !existingProperty.equals( "1980-02-01T00:00:00Z" ) )
         {
-            getLog().warn( String.format( "Property \"%s\" already set to \"%s\"", property, project.getProperties().getProperty( property ) ) );
+            getLog().warn( String.format( "Property \"%s\" already set to \"%s\"", property, existingProperty ) );
             return;
         }
 
